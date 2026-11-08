@@ -1,0 +1,411 @@
+{
+  "schema": "hermes-watt-comparison/v1",
+  "model": "Qwen3-1.7B-Q8_0",
+  "workload_sha256": "b9f4ad01b656a90149e535e7088b9ccf2e153c48ac196927261641ca88960145",
+  "method": "apple-ioreport-cpu-gpu/v1",
+  "baseline": {
+    "label": "One request per item",
+    "runs": 3,
+    "passed": 36,
+    "checked": 36,
+    "median_joules": 59.597,
+    "median_seconds": 4.7856427086517215,
+    "range_joules": [
+      57.459,
+      59.704
+    ]
+  },
+  "candidate": {
+    "label": "Batched items",
+    "runs": 3,
+    "passed": 36,
+    "checked": 36,
+    "median_joules": 24.201,
+    "median_seconds": 1.9990435000509024,
+    "range_joules": [
+      23.259,
+      25.443
+    ]
+  },
+  "verdict": "lower_energy",
+  "observed_reduction_percent": 59.3922512878165,
+  "explanation": "Every answer passed the same checks. Candidate energy was lower in every measured repetition.",
+  "scope": "Local CPU + GPU, system-wide. Alternating run order after warm-up; prompt cache disabled; model loading excluded.",
+  "limitations": "Estimated chip energy on this machine and workload only. Includes other processes. Does not prove savings on other models, tasks or cloud providers. No CO2 claim.",
+  "samples": [
+    {
+      "variant": "baseline",
+      "repeat": 1,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 57.459,
+      "seconds": 4.578415833879262,
+      "overlap": false,
+      "receipt_id": "48f8a6bfb377f3e5edf97f14e61842fa",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        },
+        {
+          "id": "T02",
+          "category": "billing"
+        },
+        {
+          "id": "T03",
+          "category": "billing"
+        },
+        {
+          "id": "T04",
+          "category": "billing"
+        },
+        {
+          "id": "T05",
+          "category": "meter"
+        },
+        {
+          "id": "T06",
+          "category": "meter"
+        },
+        {
+          "id": "T07",
+          "category": "meter"
+        },
+        {
+          "id": "T08",
+          "category": "meter"
+        },
+        {
+          "id": "T09",
+          "category": "account"
+        },
+        {
+          "id": "T10",
+          "category": "account"
+        },
+        {
+          "id": "T11",
+          "category": "account"
+        },
+        {
+          "id": "T12",
+          "category": "account"
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 1,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 23.259,
+      "seconds": 1.934088290669024,
+      "overlap": false,
+      "receipt_id": "413e10c7cb46c62a85bee621ca19c839",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        },
+        {
+          "id": "T02",
+          "category": "billing"
+        },
+        {
+          "id": "T03",
+          "category": "billing"
+        },
+        {
+          "id": "T04",
+          "category": "billing"
+        },
+        {
+          "id": "T05",
+          "category": "meter"
+        },
+        {
+          "id": "T06",
+          "category": "meter"
+        },
+        {
+          "id": "T07",
+          "category": "meter"
+        },
+        {
+          "id": "T08",
+          "category": "meter"
+        },
+        {
+          "id": "T09",
+          "category": "account"
+        },
+        {
+          "id": "T10",
+          "category": "account"
+        },
+        {
+          "id": "T11",
+          "category": "account"
+        },
+        {
+          "id": "T12",
+          "category": "account"
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 2,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 24.201,
+      "seconds": 1.9990435000509024,
+      "overlap": false,
+      "receipt_id": "bb08ba6058a4669046994408a247fde6",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        },
+        {
+          "id": "T02",
+          "category": "billing"
+        },
+        {
+          "id": "T03",
+          "category": "billing"
+        },
+        {
+          "id": "T04",
+          "category": "billing"
+        },
+        {
+          "id": "T05",
+          "category": "meter"
+        },
+        {
+          "id": "T06",
+          "category": "meter"
+        },
+        {
+          "id": "T07",
+          "category": "meter"
+        },
+        {
+          "id": "T08",
+          "category": "meter"
+        },
+        {
+          "id": "T09",
+          "category": "account"
+        },
+        {
+          "id": "T10",
+          "category": "account"
+        },
+        {
+          "id": "T11",
+          "category": "account"
+        },
+        {
+          "id": "T12",
+          "category": "account"
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 2,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 59.704,
+      "seconds": 4.7856427086517215,
+      "overlap": false,
+      "receipt_id": "74a0d630d24cbb1d33921addd2cb40aa",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        },
+        {
+          "id": "T02",
+          "category": "billing"
+        },
+        {
+          "id": "T03",
+          "category": "billing"
+        },
+        {
+          "id": "T04",
+          "category": "billing"
+        },
+        {
+          "id": "T05",
+          "category": "meter"
+        },
+        {
+          "id": "T06",
+          "category": "meter"
+        },
+        {
+          "id": "T07",
+          "category": "meter"
+        },
+        {
+          "id": "T08",
+          "category": "meter"
+        },
+        {
+          "id": "T09",
+          "category": "account"
+        },
+        {
+          "id": "T10",
+          "category": "account"
+        },
+        {
+          "id": "T11",
+          "category": "account"
+        },
+        {
+          "id": "T12",
+          "category": "account"
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 3,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 59.597,
+      "seconds": 5.032324292231351,
+      "overlap": false,
+      "receipt_id": "03dc3bc5223263d5600bbf25ca8fd6df",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        },
+        {
+          "id": "T02",
+          "category": "billing"
+        },
+        {
+          "id": "T03",
+          "category": "billing"
+        },
+        {
+          "id": "T04",
+          "category": "billing"
+        },
+        {
+          "id": "T05",
+          "category": "meter"
+        },
+        {
+          "id": "T06",
+          "category": "meter"
+        },
+        {
+          "id": "T07",
+          "category": "meter"
+        },
+        {
+          "id": "T08",
+          "category": "meter"
+        },
+        {
+          "id": "T09",
+          "category": "account"
+        },
+        {
+          "id": "T10",
+          "category": "account"
+        },
+        {
+          "id": "T11",
+          "category": "account"
+        },
+        {
+          "id": "T12",
+          "category": "account"
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 3,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 25.443,
+      "seconds": 2.1129787089303136,
+      "overlap": false,
+      "receipt_id": "c5103f23777f9d4771c7f679b3afda2d",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        },
+        {
+          "id": "T02",
+          "category": "billing"
+        },
+        {
+          "id": "T03",
+          "category": "billing"
+        },
+        {
+          "id": "T04",
+          "category": "billing"
+        },
+        {
+          "id": "T05",
+          "category": "meter"
+        },
+        {
+          "id": "T06",
+          "category": "meter"
+        },
+        {
+          "id": "T07",
+          "category": "meter"
+        },
+        {
+          "id": "T08",
+          "category": "meter"
+        },
+        {
+          "id": "T09",
+          "category": "account"
+        },
+        {
+          "id": "T10",
+          "category": "account"
+        },
+        {
+          "id": "T11",
+          "category": "account"
+        },
+        {
+          "id": "T12",
+          "category": "account"
+        }
+      ]
+    }
+  ],
+  "created_at": 1794115749.6781309,
+  "run_parameters": {
+    "temperature": 0,
+    "seed": 42,
+    "cache_prompt": false,
+    "max_tokens": 768,
+    "enable_thinking": false
+  }
+}

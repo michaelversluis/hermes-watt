@@ -1,0 +1,279 @@
+{
+  "schema": "hermes-watt-comparison/v1",
+  "model": "watt-demo",
+  "workload_sha256": "54af4fde4859cc22411ca323e32f8dbc46d533dc4faa45cbe1b46d537107049b",
+  "method": "apple-ioreport-cpu-gpu/v1",
+  "baseline": {
+    "label": "One request per item",
+    "runs": 3,
+    "passed": 30,
+    "checked": 36,
+    "median_joules": 19.108,
+    "median_seconds": 1.3740162500180304,
+    "range_joules": [
+      17.263,
+      19.611
+    ]
+  },
+  "candidate": {
+    "label": "Batched items",
+    "runs": 3,
+    "passed": 0,
+    "checked": 36,
+    "median_joules": 2.291,
+    "median_seconds": 0.15544708305969834,
+    "range_joules": [
+      2.252,
+      2.499
+    ]
+  },
+  "verdict": "inconclusive",
+  "observed_reduction_percent": null,
+  "explanation": "Quality, measurement coverage or the repeated energy ranges do not support a saving claim.",
+  "scope": "Local CPU + GPU, system-wide. Alternating run order after warm-up; prompt cache disabled; model loading excluded.",
+  "limitations": "Estimated chip energy on this machine and workload only. Includes other processes. Does not prove savings on other models, tasks or cloud providers. No CO2 claim.",
+  "samples": [
+    {
+      "variant": "baseline",
+      "repeat": 1,
+      "passed": 10,
+      "checked": 12,
+      "requests": 12,
+      "joules": 17.263,
+      "seconds": 1.3474182076752186,
+      "overlap": false,
+      "receipt_id": "99fe190187d75ac4d29fe53c6d8af4ca",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        },
+        {
+          "id": "T02",
+          "category": "billing"
+        },
+        {
+          "id": "T03",
+          "category": "billing"
+        },
+        {
+          "id": "T04",
+          "category": "billing"
+        },
+        {
+          "id": "T05",
+          "category": "billing"
+        },
+        {
+          "id": "T06",
+          "category": "meter"
+        },
+        {
+          "id": "T07",
+          "category": "meter"
+        },
+        {
+          "id": "T08",
+          "category": "billing"
+        },
+        {
+          "id": "T09",
+          "category": "account"
+        },
+        {
+          "id": "T10",
+          "category": "account"
+        },
+        {
+          "id": "T11",
+          "category": "account"
+        },
+        {
+          "id": "T12",
+          "category": "account"
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 1,
+      "passed": 0,
+      "checked": 12,
+      "requests": 1,
+      "joules": 2.499,
+      "seconds": 0.1581742912530899,
+      "overlap": false,
+      "receipt_id": "a667738ea15269c9e64c25322d453560",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 2,
+      "passed": 0,
+      "checked": 12,
+      "requests": 1,
+      "joules": 2.291,
+      "seconds": 0.15544708305969834,
+      "overlap": false,
+      "receipt_id": "e0c2daa797dc3dfe5f598ab1e48cb264",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 2,
+      "passed": 10,
+      "checked": 12,
+      "requests": 12,
+      "joules": 19.108,
+      "seconds": 1.3740162500180304,
+      "overlap": false,
+      "receipt_id": "700e2669a72e3984b92a1eed534ad5cb",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        },
+        {
+          "id": "T02",
+          "category": "billing"
+        },
+        {
+          "id": "T03",
+          "category": "billing"
+        },
+        {
+          "id": "T04",
+          "category": "billing"
+        },
+        {
+          "id": "T05",
+          "category": "billing"
+        },
+        {
+          "id": "T06",
+          "category": "meter"
+        },
+        {
+          "id": "T07",
+          "category": "meter"
+        },
+        {
+          "id": "T08",
+          "category": "billing"
+        },
+        {
+          "id": "T09",
+          "category": "account"
+        },
+        {
+          "id": "T10",
+          "category": "account"
+        },
+        {
+          "id": "T11",
+          "category": "account"
+        },
+        {
+          "id": "T12",
+          "category": "account"
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 3,
+      "passed": 10,
+      "checked": 12,
+      "requests": 12,
+      "joules": 19.611,
+      "seconds": 1.4678892907686532,
+      "overlap": false,
+      "receipt_id": "a2e9cf959238303c70581d72b143aa3e",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        },
+        {
+          "id": "T02",
+          "category": "billing"
+        },
+        {
+          "id": "T03",
+          "category": "billing"
+        },
+        {
+          "id": "T04",
+          "category": "billing"
+        },
+        {
+          "id": "T05",
+          "category": "billing"
+        },
+        {
+          "id": "T06",
+          "category": "meter"
+        },
+        {
+          "id": "T07",
+          "category": "meter"
+        },
+        {
+          "id": "T08",
+          "category": "billing"
+        },
+        {
+          "id": "T09",
+          "category": "account"
+        },
+        {
+          "id": "T10",
+          "category": "account"
+        },
+        {
+          "id": "T11",
+          "category": "account"
+        },
+        {
+          "id": "T12",
+          "category": "account"
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 3,
+      "passed": 0,
+      "checked": 12,
+      "requests": 1,
+      "joules": 2.252,
+      "seconds": 0.15523124998435378,
+      "overlap": false,
+      "receipt_id": "8b07071a960ca71637e18a80969dd705",
+      "answers": [
+        {
+          "id": "T01",
+          "category": "billing"
+        }
+      ]
+    }
+  ],
+  "created_at": 1794115445.327714,
+  "run_parameters": {
+    "temperature": 0,
+    "seed": 42,
+    "cache_prompt": false,
+    "max_tokens": 768,
+    "enable_thinking": false
+  }
+}

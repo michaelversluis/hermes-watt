@@ -1,0 +1,7 @@
+Hermes Watt · completed
+Local CPU + GPU: 0.09091 Wh (estimated)
+2 observed model requests · 1 background · 0 failed
+Duration: 6.9s
+Provider inference energy: unknown
+Includes other processes. Excludes the rest of the computer, electricity supply losses and remote/cloud inference.
+Background model calls are included in the request count. Review whether that work is useful for this workflow.

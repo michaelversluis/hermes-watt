@@ -1,0 +1,49 @@
+{
+  "id": "4412e5a89037122c2e085c4eb1628559",
+  "started": 1794116250.977516,
+  "ended": 1794116257.830924,
+  "status": "completed",
+  "model": "watt-live-context",
+  "joules": 327.286,
+  "method": "apple-ioreport-cpu-gpu/v1",
+  "reason": null,
+  "overlap": 0,
+  "attempts": [
+    {
+      "kind": "main",
+      "model": "watt-live-context",
+      "status": "ok",
+      "input_tokens": 11005,
+      "output_tokens": 28
+    },
+    {
+      "kind": "auxiliary",
+      "model": "watt-live-context",
+      "status": "ok",
+      "input_tokens": 251,
+      "output_tokens": 14
+    }
+  ],
+  "requests": 2,
+  "accounting_complete": true,
+  "failed_requests": 0,
+  "auxiliary_requests": 1,
+  "duration_s": 6.853408098220825,
+  "energy": {
+    "status": "estimated",
+    "joules": 327.286,
+    "wh": 0.09091277777777777,
+    "method": "apple-ioreport-cpu-gpu/v1",
+    "scope": "Local CPU + GPU, system-wide",
+    "limitation": "Includes other processes. Excludes the rest of the computer, electricity supply losses and remote/cloud inference.",
+    "overlap": false
+  },
+  "inference_energy": {
+    "status": "unknown",
+    "reason": "No provider energy telemetry. Local chip activity is shown separately."
+  },
+  "quality": "not assessed",
+  "tips": [
+    "Background model calls are included in the request count. Review whether that work is useful for this workflow."
+  ]
+}

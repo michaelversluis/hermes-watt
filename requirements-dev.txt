@@ -1,0 +1,8 @@
+pytest==8.4.2
+fastapi==0.162.2
+httpx==0.28.1
+uvicorn==0.54.0
+ruamel.yaml==0.18.16
+packaging==26.3
+rich==14.3.4
+python-dotenv==1.2.4

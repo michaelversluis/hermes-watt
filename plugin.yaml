@@ -1,0 +1,31 @@
+name: hermes-watt
+version: 0.1.0
+manifest_version: 2
+api_version: 1
+description: Honest energy receipts and quality-checked efficiency comparisons for Hermes.
+author: Michael Versluis
+license: MIT
+homepage: https://github.com/michaelversluis/hermes-watt
+requires_hermes: ">=0.23.0"
+tags: [energy, sustainability, observability, local-ai]
+provides_hooks:
+  - pre_llm_call
+  - pre_api_request
+  - post_api_request
+  - api_request_error
+  - pre_auxiliary_call
+  - post_auxiliary_call
+  - on_session_end
+  - on_session_finalize
+  - on_session_reset
+python_dependencies:
+  - "zeus-apple-silicon==1.1.0; sys_platform == 'darwin' and platform_machine == 'arm64'"
+config_schema:
+  recording:
+    type: bool
+    default: true
+    description: Store task metadata locally when this plugin is enabled. No prompts, responses or external telemetry.
+  local_energy:
+    type: bool
+    default: false
+    description: Opt in to system-wide Apple CPU + GPU energy estimates. Does not measure cloud inference. Restart the session after changing.

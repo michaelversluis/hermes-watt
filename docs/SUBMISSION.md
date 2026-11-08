@@ -6,7 +6,11 @@
 
 **Repository:** https://github.com/michaelversluis/hermes-watt
 
-**Catalog PR:** add URL after creation.
+**Catalog PR:** branch prepared and pushed; upstream PR creation was rejected by GitHub permissions through both the app integration and authenticated CLI. It is **not** submitted.
+
+[Open the prepared comparison](https://github.com/NousResearch/hermes-agent/compare/main...michaelversluis:michael/hermes-watt-catalog-20261108?expand=1). Use the title `feat(plugin-catalog): add Hermes Watt energy receipts and checked comparisons` and [this prepared PR body](CATALOG-PR.md).
+
+The branch changes exactly one catalog file and pins `ead82379e6329e8c55c279665c6e09481234a18f`. Structural catalog validation and all 15 upstream `scripts/check` checks passed. A Nous maintainer must review and admit the listing.
 
 **Contact email / Discord:** pending Michael's answer; do not guess or publish private contact data in this repository.
 
@@ -16,7 +20,9 @@ Suggested X text:
 
 > AI needs an energy receipt, too. Hermes Watt checks answer quality before showing an efficiency result. Our local experiment: 59.4% less estimated CPU/GPU energy; 72/72 answers correct. Cloud energy stays unknown. Built for @NousResearch. github.com/michaelversluis/hermes-watt
 
-Video: `docs/evidence/hermes-watt-demo.mp4` (60 seconds).
+Video: [download the 60-second MP4](https://github.com/michaelversluis/hermes-watt/releases/download/v0.1.0/hermes-watt-demo.mp4).
+
+Release: https://github.com/michaelversluis/hermes-watt/releases/tag/v0.1.0
 
 Form: https://form.typeform.com/to/FwJLvOln
 

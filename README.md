@@ -12,7 +12,7 @@ Token counts tell you how much text moved. They do not tell you how much electri
 - A repeatable local-model experiment: twelve separate classification requests versus one batch, with the same answer checks and three repetitions each.
 - No automatic model switching or prompt rewriting. The observer cannot modify agent output.
 
-[60-second evidence video](docs/evidence/hermes-watt-demo.mp4) · [Actual /watt output](docs/evidence/watt-output.txt)
+[Download the 60-second evidence video](https://github.com/michaelversluis/hermes-watt/releases/download/v0.1.0/hermes-watt-demo.mp4) · [Actual /watt output](docs/evidence/watt-output.txt)
 
 ## A real experiment, with boundaries
 
@@ -37,11 +37,11 @@ The earlier 0.6B experiment failed the answer checks. Its lower energy did **not
 Requires **Hermes 0.23.0 or newer**. Existing older Hermes installations must be upgraded separately. Nothing in this repository updates your agent automatically.
 
 ```sh
-hermes plugins install michaelversluis/hermes-watt
+hermes plugins install michaelversluis/hermes-watt --ref ead82379e6329e8c55c279665c6e09481234a18f
 hermes plugins enable hermes-watt
 ```
 
-For an audited immutable install, add `--ref` followed by the full forty-character commit from the catalog PR. Restart your Hermes session. Enable the agent plugin and Desktop plugin for the same profile, then choose **Hermes Watt** in the sidebar or command palette. After a task, `/watt` shows the conversation's receipt.
+The command pins the exact validated 0.1.0 source commit. Catalog admission is pending; this is a direct repository install. Restart your Hermes session. Enable the agent plugin and Desktop plugin for the same profile, then choose **Hermes Watt** in the sidebar or command palette. After a task, `/watt` shows the conversation's receipt.
 
 Request metadata stays local when the plugin is enabled. Hardware energy collection is **off by default**. Opt in through the plugin settings, or merge this into the active profile's `config.yaml` (preserve your other settings):
 

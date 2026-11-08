@@ -1,8 +1,10 @@
-"""Invoke Hermes' unmodified official catalog validator."""
-import json
-import sys
+"""Run the documented Hermes CLI validator (no private core imports)."""
+import argparse
+import subprocess
 from pathlib import Path
-from hermes_cli.plugin_validate import validate_plugin_dir
-report=validate_plugin_dir(Path(sys.argv[1]).resolve())
-print(json.dumps(report.to_dict(),indent=2))
-raise SystemExit(report.exit_code)
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("package", type=Path)
+parser.add_argument("--hermes", default="hermes", help="Path to the official Hermes CLI executable")
+args = parser.parse_args()
+raise SystemExit(subprocess.run([args.hermes, "plugins", "validate", str(args.package.resolve()), "--install-deps"]).returncode)

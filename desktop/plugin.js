@@ -1,5 +1,5 @@
-import { createElement as h, useState } from 'react'
-import { host, useQuery, useValue, ROUTES_AREA, SIDEBAR_NAV_AREA, PALETTE_AREA, gatewayActivationEpoch } from '@hermes/plugin-sdk'
+import { createElement as h, useState, useEffect, useRef } from 'react'
+import { host, useQuery, useMutation, useValue, ROUTES_AREA, SIDEBAR_NAV_AREA, PALETTE_AREA, gatewayActivationEpoch } from '@hermes/plugin-sdk'
 
 const styles = {
   page: { color: 'var(--ui-text-primary)', maxWidth: 1100, margin: '0 auto', padding: '32px 28px', fontFamily: 'inherit' },
@@ -16,11 +16,11 @@ const small = text => h('p', {style: {...styles.muted, fontSize: 12, marginBotto
 const metric = (label, value, detail) => h('section', {style: styles.card}, h('div', {style: styles.label}, label), h('div', {style: styles.value}, value), small(detail))
 
 export function Comparison({report}) {
-  if (!report) return h('section', {style: styles.card}, h('h2', null, 'Can the same work use less energy?'), h('p', {style: styles.muted}, 'Run the reproducible comparison with a local model. Hermes Watt checks every answer before showing an efficiency result.'), small('No comparison has been recorded for this profile yet. Instructions: scripts/benchmark.py --help'))
+  if (!report) return h('section', {style: styles.card}, h('h2', null, 'Can the same work use less energy?'), h('p', {style: styles.muted}, 'Run the reproducible comparison with a local model. Hermes Watt checks every answer before showing an efficiency result.'), small('No comparison has been recorded for this profile yet. Start a local test below.'))
   const rows = [report.baseline, report.candidate]
   const maximum = Math.max(...rows.map(r => r.median_joules || 0), 0.001)
   return h('section', {style: {...styles.card, borderColor: 'var(--ui-accent)'}},
-    h('div', {style: styles.label}, 'Same task. Checked answers.'),
+    h('div', {style: styles.label}, report.workload_label || 'Same task. Checked answers.'),
     h('h2', {style:{margin:'0 0 8px', fontSize:25}}, report.verdict === 'lower_energy' ? `${fmt(report.observed_reduction_percent, 1)}% lower local energy in this experiment` : 'Comparison recorded — no saving claim'),
     h('p', {style: styles.muted}, report.explanation),
     ...rows.map((r, index) => h('div', {key:r.label, style:{marginTop:20}},
@@ -29,6 +29,46 @@ export function Comparison({report}) {
       small(`${r.passed}/${r.checked} answers correct · ${r.runs} repetitions · median ${fmt(r.median_seconds,1)}s`))),
     h('details', {style:{marginTop:22}}, h('summary',{style:{cursor:'pointer'}},'What this comparison proves'),
       small(report.scope), small(report.limitations), small(`Model: ${report.model} · Method: ${report.method}`), small(`Workload fingerprint: ${report.workload_sha256}`)))
+}
+
+export function ExperimentPanel({ctx,scope,onComplete=()=>{}}) {
+  const alive=useRef(true)
+  const submitting=useRef(false)
+  useEffect(()=>{alive.current=true;return()=>{alive.current=false}},[])
+  const [workload,setWorkload]=useState('tickets')
+  const [repetitions,setRepetitions]=useState(5)
+  const [consent,setConsent]=useState(false)
+  const state=useQuery({queryKey:['hermes-watt',...scope,'experiment'],queryFn:()=>ctx.rest('/experiment',{timeoutMs:10000}),retry:1,staleTime:0,gcTime:0,refetchInterval:query=>['running','cancelling'].includes(query.state.data?.job?.status)?1000:false})
+  const job=state.data?.job
+  const active=['running','cancelling'].includes(job?.status)
+  const start=useMutation({mutationFn:body=>ctx.rest('/experiment',{method:'POST',body,timeoutMs:10000}),retry:false,onSettled:()=>{submitting.current=false;if(alive.current)state.refetch()}})
+  const cancel=useMutation({mutationFn:()=>ctx.rest('/experiment/cancel',{method:'POST',body:{request_id:job.id},timeoutMs:10000}),retry:false,onSettled:()=>{if(alive.current)state.refetch()}})
+  useEffect(()=>{if(job?.status==='completed')onComplete()},[job?.id,job?.status])
+  const ready=state.data?.configured===true && !state.isError
+  const busy=active||start.isPending
+  const submit=()=>{
+    if(!ready||!consent||busy||submitting.current)return
+    submitting.current=true
+    start.mutate({request_id:crypto.randomUUID().replaceAll('-',''),workload,repetitions,consent:true})
+  }
+  return h('section',{style:styles.card},
+    h('div',{style:styles.label},'TRY IT YOURSELF'),
+    h('h2',{style:{margin:'0 0 8px'}},'Test a lower-energy approach'),
+    h('p',{style:styles.muted},'Compare individual requests with one batch. Both approaches must pass the same answer checks.'),
+    h('div',{style:{display:'flex',gap:16,flexWrap:'wrap',marginBottom:18}},
+      h('label',null,'Example task ',h('select',{value:workload,disabled:busy,onChange:e=>setWorkload(e.target.value),style:styles.button},h('option',{value:'tickets'},'Support tickets'),h('option',{value:'extraction'},'Document extraction'))),
+      h('label',null,'Repetitions ',h('select',{value:repetitions,disabled:busy,onChange:e=>setRepetitions(Number(e.target.value)),style:styles.button},...[3,5,10].map(n=>h('option',{key:n,value:n},n+' per approach'))))),
+    h('label',{style:{display:'flex',gap:10,alignItems:'flex-start',fontSize:13,lineHeight:1.5,marginBottom:18}},
+      h('input',{type:'checkbox',checked:consent,disabled:busy,onChange:e=>setConsent(e.target.checked)}),
+      'I agree to send fictional examples to my local model and estimate system-wide CPU + GPU energy for this test.'),
+    h('div',{style:{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap'}},
+      h('button',{style:{...styles.button,background:'var(--ui-accent)',color:'#102214',fontWeight:650},disabled:!ready||!consent||busy,onClick:submit},busy?'Testing…':'Test a lower-energy approach'),
+      active?h('button',{style:styles.button,disabled:job.status==='cancelling'||cancel.isPending,onClick:()=>cancel.mutate()},job.status==='cancelling'?'Stopping…':'Stop test'):null),
+    active?h('div',{role:'status',style:{marginTop:18}},h('progress',{max:job.total,value:job.done,style:{width:'100%',accentColor:'var(--ui-accent)'}}),small(job.phase==='warmup'?'Warming up both approaches; warm-up is not counted.':`${job.done}/${job.total} test runs complete. ${job.status==='cancelling'?'Finishing the current local request before stopping.':''}`)):null,
+    start.isError||cancel.isError?h('p',{role:'alert',style:styles.muted},'Could not confirm the request. Check the test status before trying again.',h('button',{style:{...styles.button,marginLeft:12},disabled:state.isFetching,onClick:()=>state.refetch()},'Check test status')):null,
+    ['failed','interrupted','cancelled'].includes(job?.status)?h('p',{role:'status',style:styles.muted},job.status==='cancelled'?'Test stopped. Your previous result is preserved.':job.status==='interrupted'?'The test was interrupted. Your previous result is preserved; you can start again.':'The local test could not finish. Start your local model, check its endpoint in Hermes Watt settings, and try again. Your previous result is preserved.'):null,
+    state.isError||state.data?.configured===false?h('p',{role:'alert',style:styles.muted},'Enable Hermes Watt for this profile and configure a local model endpoint in its plugin settings.'):null,
+    h('details',{style:{marginTop:18}},h('summary',{style:{cursor:'pointer'}},'Local setup and measurement limits'),small(`Model: ${state.data?.model||'not configured'}. Start a local OpenAI-compatible model server before testing. The endpoint and model are set in Hermes Watt plugin settings.`),small('Only fictional built-in examples are sent. No cloud calls or automatic downloads. Energy is estimated on Apple Silicon; on other computers it stays unknown. Close other workloads for a cleaner comparison.')))
 }
 
 export function WattPage({ctx}) {
@@ -55,6 +95,7 @@ export function WattPage({ctx}) {
     data && data.accounting_complete === false ? h('p',{role:'status',style:styles.muted},'Some request events are missing. The observed count is a lower bound.') : null,
     h('div',{style:{height:24}}),
     comparison.isError ? h('section',{style:styles.card,role:'alert'},h('h2',null,'Comparison unavailable'),small('Refresh to retry. No energy saving is inferred from missing evidence.')) : h(Comparison,{report:comparison.data?.comparison}),
+    h(ExperimentPanel,{key:JSON.stringify([profile,epoch]),ctx,scope:[profile,epoch],onComplete:()=>{comparison.refetch();overview.refetch()}}),
     h('section',{style:styles.card},h('h2',{style:{marginTop:0}},'Your task receipts'),
       receipts.length ? h('div',{style:{overflowX:'auto'}},h('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:13}},
         h('thead',null,h('tr',null,...['Task','State','Requests','Local energy'].map(x=>h('th',{key:x,style:{textAlign:'left',padding:'10px 8px',color:'var(--ui-text-secondary)',fontWeight:500}},x)))),

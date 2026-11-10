@@ -1,19 +1,23 @@
-Adds only `plugin-catalog/hermes-watt.yaml`, pinned to public v0.1.0 source at `ead82379e6329e8c55c279665c6e09481234a18f`. Submitted by the repository owner for the Hermes Plugin Hackathon.
+Adds only `plugin-catalog/hermes-watt.yaml`, pinning the public 0.2.0 release to the immutable commit in that entry. Submitted by the repository owner for the Hermes Plugin Hackathon.
 
-Hermes Watt offers a native Desktop page and `/watt` for profile-scoped task receipts: observed model requests, linked auxiliary calls, failures and duration. Opt-in Apple CPU/GPU energy is labelled estimated and system-wide; cloud inference energy stays unknown. Its separate local batching experiment applies identical answer checks before showing an efficiency result. Original plugin code; README acknowledges Traceverse's existing energy observability.
+Hermes Watt offers a Desktop page and `/watt` for profile-scoped energy receipts: observed main/auxiliary model requests, failures and duration. Apple CPU/GPU estimates are opt-in, system-wide and explicitly estimated; provider inference energy stays unknown. Its new comparison button runs two fixed synthetic workloads, with identical answer checks before any efficiency claim. This is original plugin code; the README acknowledges Traceverse's existing energy observability.
 
 ### Disclosure
 
-No runtime third-party network, uploads, credentials, shell processes or background service. Local SQLite stores hashed IDs, timestamps, safe model labels, usage counts and energy estimates; no prompt/response text or raw provider errors. Apple-only `zeus-apple-silicon==1.1.0` reads IOReport through native code in-process, explicitly opt-in. The manually launched developer benchmark sends synthetic tickets only to a loopback model server. Its preview is loopback-only and is not started by the plugin. [Full disclosure](https://github.com/michaelversluis/hermes-watt/blob/ead82379e6329e8c55c279665c6e09481234a18f/docs/PRIVACY.md).
+Ordinary hooks only observe metadata and cannot change agent output. No conversation prompts/responses, raw errors, credentials or telemetry uploads are retained. Hashed IDs, model labels, counts and estimates remain in profile-local SQLite. The pinned Apple-only native dependency `zeus-apple-silicon==1.1.0` reads IOReport in-process, explicitly opt-in.
+
+**The comparison is an explicit action:** after a consent checkbox it starts one bounded worker thread, sends only built-in fictional examples to the configured literal-loopback HTTP model server, and stores synthetic answers plus check results. No arbitrary client prompt/URL/path, DNS endpoint, proxy, redirect, model download, subprocess or automatic model switching. The local model must be started separately by the operator. Maximum 3–10 repetitions per approach; five-minute deadline plus the current request, 20-second HTTP timeout, cooperative cancel. One API job per profile, atomic request-ID deduplication, captured profile ownership, old report retained on failure/cancel. This is not a permanent background service. [Full disclosure](https://github.com/michaelversluis/hermes-watt/blob/main/docs/PRIVACY.md).
 
 ### Verification
 
-Full pinned Git tree passed `hermes plugins validate --install-deps` on official Hermes 0.23.0: all 16 checks, no warnings. [Green GitHub CI](https://github.com/michaelversluis/hermes-watt/actions/runs/42451700498): Python 3.11/3.14 tests (41 each), Desktop render checks and official catalog validation. A real isolated CLI/gateway task recorded main plus auxiliary requests; `/watt` displayed its receipt on resume. Catalog structural validation passed locally. No core changes or full Hermes test-suite claim.
-
-The successful local experiment had 72/72 correct answers across both variants and 59.4% lower median estimated CPU/GPU energy for batching on one M3 Max. Earlier failed-quality evidence is retained with no saving claim. No cloud/CO2/general savings claim.
+- Official Hermes 0.23.0 runtime validation with dependency installation: all 16 checks passed, no warnings, safe scan, host-isolation compatible. The repository CI also validates the full Git tree.
+- 63 Python tests on both Python 3.11 and 3.14; real HTTP/redirect tests, concurrent start/retry/cancel cases, profile ownership and incomplete/overlapping measurement gates.
+- React render and DOM interaction tests: consent, rapid double-click, bounded body, progress/cancel, StrictMode and stale responses after a profile switch.
+- Real isolated `hermes serve` and plugin-host integration: unauthorized GET 401; authorized GET 200; repeated start ID reused one job; a distinct simultaneous start returned 409; worker completed, 6 receipts/39 requests/72 checked answers. [Sanitized host proof](https://github.com/michaelversluis/hermes-watt/blob/main/docs/evidence/host-v02.json).
+- Two real M3 Max/Qwen experiments, ten repetitions per approach, 480/480 answers correct. Ticket batching used 58.1% lower median estimated local CPU/GPU energy; extraction 32.7%. Raw samples and checks are public. Earlier failed-quality evidence remains inconclusive. No cloud, CO2 or universal savings claim.
 
 ### Visual QA limitation
 
-Native Desktop interactive QA is still unverified because the available browser/capture tooling failed. Component render tests and SDK validation pass. Known issues declare this limitation. This [60-second evidence video](https://github.com/michaelversluis/hermes-watt/blob/ead82379e6329e8c55c279665c6e09481234a18f/docs/evidence/hermes-watt-demo.mp4) and the evidence image are labelled data replay, not fabricated native screenshots. A native screenshot remains to be supplied.
+Native Desktop interaction and screen recording remain unverified: the Mac is locked and available browser/capture tooling failed. Automated component interaction tests and actual host integration pass, but are not a native visual test. The catalog banner and [60-second evidence replay](https://github.com/michaelversluis/hermes-watt/releases/download/v0.2.0/hermes-watt-evidence-v02.mp4) are labelled recorded data, not fabricated screenshots. `known_issues` declares the limitation; a native screenshot remains to be supplied.
 
-Maintainers retain catalog admission and merge authority.
+No core changes. Maintainers retain catalog admission and merge authority.

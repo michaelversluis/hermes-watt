@@ -1,0 +1,1508 @@
+{
+  "schema": "hermes-watt-comparison/v1",
+  "model": "Qwen3-1.7B-Q8_0",
+  "workload_sha256": "183e07f8bf5b2bc90a993b3f6f88ee46bbd7b63490e4153437ac6e35dcac070f",
+  "method": "apple-ioreport-cpu-gpu/v1",
+  "baseline": {
+    "label": "One request per item",
+    "runs": 10,
+    "passed": 120,
+    "checked": 120,
+    "median_joules": 83.015,
+    "median_seconds": 6.544320187298581,
+    "range_joules": [
+      80.644,
+      87.543
+    ]
+  },
+  "candidate": {
+    "label": "Batched items",
+    "runs": 10,
+    "passed": 120,
+    "checked": 120,
+    "median_joules": 55.884,
+    "median_seconds": 4.658566999481991,
+    "range_joules": [
+      35.135,
+      59.252
+    ]
+  },
+  "verdict": "lower_energy",
+  "observed_reduction_percent": 32.682045413479486,
+  "explanation": "Every answer passed the same checks. Candidate energy was lower in every measured repetition.",
+  "scope": "Local CPU + GPU, system-wide. Alternating run order after warm-up; prompt cache disabled; model loading excluded.",
+  "limitations": "Estimated chip energy on this machine and workload only. Includes other processes. Does not prove savings on other models, tasks or cloud providers. No CO2 claim.",
+  "samples": [
+    {
+      "variant": "baseline",
+      "repeat": 1,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 84.109,
+      "seconds": 6.482214416842908,
+      "overlap": false,
+      "receipt_id": "10b929b6f58bb6046e5f37b322771088",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 1,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 54.033,
+      "seconds": 4.6007095840759575,
+      "overlap": false,
+      "receipt_id": "68e067709efec45fedf70cb3b05411b6",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 2,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 56.054,
+      "seconds": 4.593605250120163,
+      "overlap": false,
+      "receipt_id": "128f0ee68d3a661bd16fbe12f016da91",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 2,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 81.772,
+      "seconds": 6.405876083299518,
+      "overlap": false,
+      "receipt_id": "980578a80ab24a4baa8937825b6dbf27",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 3,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 80.644,
+      "seconds": 6.457031167112291,
+      "overlap": false,
+      "receipt_id": "1d828ca19643e499616ca5fc5ec49959",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 3,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 35.135,
+      "seconds": 5.552981874905527,
+      "overlap": false,
+      "receipt_id": "34e69035b7f2d96ae80dd36bf9e4a121",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 4,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 49.892,
+      "seconds": 4.722406290937215,
+      "overlap": false,
+      "receipt_id": "92f1c7167e4ec379b10a11f341ac2cac",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 4,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 87.543,
+      "seconds": 6.849251958075911,
+      "overlap": false,
+      "receipt_id": "b7c3e802457e3f5b36e09c9fc026b1ff",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 5,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 86.05,
+      "seconds": 6.836603499948978,
+      "overlap": false,
+      "receipt_id": "ef74f03f8c7d6aa298ddc9a7c7237e9c",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 5,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 59.252,
+      "seconds": 4.914413874968886,
+      "overlap": false,
+      "receipt_id": "da36f6fb58d175c4deaa9741a87c724b",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 6,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 58.987,
+      "seconds": 4.815021583810449,
+      "overlap": false,
+      "receipt_id": "a0aa0315b9abccf577be71ba112b4633",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 6,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 85.045,
+      "seconds": 6.864543207921088,
+      "overlap": false,
+      "receipt_id": "5ba5bab1ff0a2428b901bd37674464fb",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 7,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 83.989,
+      "seconds": 6.686760209035128,
+      "overlap": false,
+      "receipt_id": "1f1449089be9bfd90033f4ecc202acbe",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 7,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 56.317,
+      "seconds": 4.61007508309558,
+      "overlap": false,
+      "receipt_id": "b5a8e0c6dbfcf3eaf3733d13c3d777af",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 8,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 55.65,
+      "seconds": 4.603867541067302,
+      "overlap": false,
+      "receipt_id": "c64a23ef27d39a96b75b71081ec202ea",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 8,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 82.009,
+      "seconds": 6.498010292183608,
+      "overlap": false,
+      "receipt_id": "d7e33d0da7912a7cc80920cee33e7dca",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 9,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 81.804,
+      "seconds": 6.5438959170132875,
+      "overlap": false,
+      "receipt_id": "e3726acf2d33c25ed0a2a5abbf3198ca",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 9,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 56.235,
+      "seconds": 4.669299582950771,
+      "overlap": false,
+      "receipt_id": "fefab961e1b82ff88a29ec289d574f76",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "repeat": 10,
+      "passed": 12,
+      "checked": 12,
+      "requests": 1,
+      "joules": 55.714,
+      "seconds": 4.647834416013211,
+      "overlap": false,
+      "receipt_id": "a2f8e88366d2762b48121afbbdf541d0",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "repeat": 10,
+      "passed": 12,
+      "checked": 12,
+      "requests": 12,
+      "joules": 82.041,
+      "seconds": 6.5447444575838745,
+      "overlap": false,
+      "receipt_id": "0e3ff557a8ab67cef3560a681d64e473",
+      "answers": [
+        {
+          "id": "D01",
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        },
+        {
+          "id": "D02",
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        },
+        {
+          "id": "D03",
+          "invoice": "INV-309",
+          "amount_cents": 700
+        },
+        {
+          "id": "D04",
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        },
+        {
+          "id": "D05",
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        },
+        {
+          "id": "D06",
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        },
+        {
+          "id": "D07",
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        },
+        {
+          "id": "D08",
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        },
+        {
+          "id": "D09",
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        },
+        {
+          "id": "D10",
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        },
+        {
+          "id": "D11",
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        },
+        {
+          "id": "D12",
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      ]
+    }
+  ],
+  "created_at": 1794296159.6792629,
+  "run_parameters": {
+    "temperature": 0,
+    "seed": 42,
+    "cache_prompt": false,
+    "max_tokens": 1024,
+    "enable_thinking": false
+  },
+  "workload": "extraction",
+  "workload_label": "Document extraction",
+  "runtime_source_commit": "ee0471b8fe58e51e24b7d6ec3978b6afcb4b8618"
+}

@@ -1,6 +1,17 @@
-# Verification — 8 November 2026
+# Verification — 10 November 2026
 
-## Completed
+## Version 0.2.0
+
+- 63 Python tests passed locally on Python 3.11 and 3.14. Added real loopback HTTP and redirect checks, exact-answer validation, concurrent job claims, cancellation, preserved results, interrupted-host recovery, profile binding and incomplete/overlapping measurement rejection.
+- React rendering and DOM interaction tests passed: consent gate, synchronous double-click, bounded request body, progress/cancel states, StrictMode completion refresh, a pending response after a profile switch, and failed/interrupted jobs. These interaction tests execute the real shipped React component with the documented SDK adapter.
+- Official Hermes 0.23.0 validation of the runtime package with dependencies: all 16 checks passed, no warnings, safe scan, host isolation compatible.
+- **Actual Hermes host integration passed**, using `hermes serve --isolated` from revision `2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19`. Unauthenticated plugin reads returned 401; authenticated reads returned 200. A repeated start ID reused one job, a distinct concurrent start returned 409, and the worker completed through the real plugin host. Six receipts, 39 observed requests and 72/72 checked answers. [Sanitized proof](evidence/host-v02.json). This is separate from the benchmark results below and makes no additional savings claim.
+- Both ten-repeat evidence runs were started and polled through the shipped HTTP routes. All 480 answers passed. Ticket batching: 58.1% lower median estimated local CPU/GPU energy; extraction: 32.7%. Raw data, answer checks and run parameters are public. These are narrow M3 Max/Qwen results, not a general or cloud claim.
+- New 60-second 1280×720 H.264 evidence replay and 1200×600 data illustration generated from those exact public samples. The banner and result slide were visually inspected. Both are labelled as recorded evidence, not native UI capture.
+- Runtime source: `ee0471b8fe58e51e24b7d6ec3978b6afcb4b8618`. Repository CI validates the full published Git tree as well as running Python and UI tests; see the PR checks for current status.
+
+## Earlier 0.1.0 verification (8 November)
+
 
 - 41 Python tests passed on Python 3.11 and 3.14: units, missing readings, errors, deduplication, concurrent callbacks, overlapping windows, opt-out, reset/disable lifecycle, profile separation, privacy, read-only API and comparison gates.
 - Desktop source syntax and React server-render tests passed: empty/unknown states, quality gate, displayed energy and HTML escaping. The preview bundles the exact shipped Desktop component through a development-only SDK adapter.
@@ -16,8 +27,8 @@
 
 ## Limits and remaining external checks
 
-Native Hermes Desktop activation and interactive screenshot review could not be performed: the available browser automation failed on `timeoutMs`; native capture failed with ScreenCaptureKit -3811. Server rendering and SDK validation are completed, but do not substitute for native interactive QA. The repository's chart is an evidence illustration, not a screenshot of native Hermes Desktop.
+Native Hermes Desktop activation and interactive screenshot review remain unverified. On 10 November the Mac was locked and browser navigation failed in the automation layer; earlier native capture also failed with ScreenCaptureKit -3811. Server rendering and SDK validation are completed, but do not substitute for native interactive QA. The repository's chart is an evidence illustration, not a screenshot of native Hermes Desktop.
 
 The test-only FastAPI/Starlette TestClient emits a deprecation warning for httpx; tests pass. Unsupported hardware is handled as unknown; physical Linux/Windows energy telemetry is not implemented. There is no cloud energy or CO2 estimate.
 
-Catalog admission remains the Nous maintainers' decision. Hackathon submission additionally needs the owner's contact details and an X demo-post URL. Building the plugin, opening the catalog PR, publishing a post and submitting the form are distinct states.
+Catalog admission remains the Nous maintainers' decision. The owner supplied submission contact details privately on 10 November; they are intentionally absent from this public repository. Hackathon submission still needs an open catalog PR, an X demo-post URL and form confirmation. Building the plugin, opening the catalog PR, publishing a post and submitting the form are distinct states.

@@ -1,5 +1,5 @@
 name: hermes-watt
-version: 0.1.0
+version: 0.2.0
 manifest_version: 2
 api_version: 1
 description: Honest energy receipts and quality-checked efficiency comparisons for Hermes.
@@ -29,3 +29,11 @@ config_schema:
     type: bool
     default: false
     description: Opt in to system-wide Apple CPU + GPU energy estimates. Does not measure cloud inference. Restart the session after changing.
+  comparison_endpoint:
+    type: str
+    default: http://127.0.0.1:18082/v1
+    description: Local OpenAI-compatible model endpoint for explicit comparisons. Only literal loopback HTTP addresses with a port and /v1 are allowed; no proxies or redirects.
+  comparison_model:
+    type: str
+    default: Qwen3-1.7B-Q8_0
+    description: Model name served at the local comparison endpoint. No model is downloaded or started automatically.

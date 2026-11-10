@@ -1,0 +1,214 @@
+{
+  "tickets": {
+    "label": "Support tickets",
+    "description": "Classify twelve fictional requests.",
+    "system": "Classify each support ticket as billing, meter, or account. Billing is invoices and payments; meter is the physical meter and readings; account is login, password and contact details. Return JSON only with a results array. Return exactly one object per input, preserving its id. /no_think",
+    "fields": {
+      "category": {
+        "type": "string",
+        "enum": [
+          "billing",
+          "meter",
+          "account"
+        ]
+      }
+    },
+    "items": [
+      {
+        "id": "T01",
+        "text": "I was charged twice for the same invoice.",
+        "expected": {
+          "category": "billing"
+        }
+      },
+      {
+        "id": "T02",
+        "text": "Please explain the amount on my latest bill.",
+        "expected": {
+          "category": "billing"
+        }
+      },
+      {
+        "id": "T03",
+        "text": "My payment has not appeared on the invoice.",
+        "expected": {
+          "category": "billing"
+        }
+      },
+      {
+        "id": "T04",
+        "text": "I need a copy of last month's invoice.",
+        "expected": {
+          "category": "billing"
+        }
+      },
+      {
+        "id": "T05",
+        "text": "My electricity meter display is blank.",
+        "expected": {
+          "category": "meter"
+        }
+      },
+      {
+        "id": "T06",
+        "text": "The meter reading is not updating.",
+        "expected": {
+          "category": "meter"
+        }
+      },
+      {
+        "id": "T07",
+        "text": "How do I submit my electricity meter reading?",
+        "expected": {
+          "category": "meter"
+        }
+      },
+      {
+        "id": "T08",
+        "text": "My smart meter shows an error code.",
+        "expected": {
+          "category": "meter"
+        }
+      },
+      {
+        "id": "T09",
+        "text": "I cannot log in to my account.",
+        "expected": {
+          "category": "account"
+        }
+      },
+      {
+        "id": "T10",
+        "text": "Please reset the password for my account.",
+        "expected": {
+          "category": "account"
+        }
+      },
+      {
+        "id": "T11",
+        "text": "I want to change the email address on my account.",
+        "expected": {
+          "category": "account"
+        }
+      },
+      {
+        "id": "T12",
+        "text": "How can I update my account contact details?",
+        "expected": {
+          "category": "account"
+        }
+      }
+    ]
+  },
+  "extraction": {
+    "label": "Document extraction",
+    "description": "Extract invoice references and amounts from twelve fictional notes.",
+    "system": "Extract the invoice reference and final amount due from each fictional note. Return amount_cents as an integer in euro cents. Ignore old balances, unrelated numbers and item counts. Return JSON only with a results array of id, invoice and amount_cents. Return exactly one object per input note, preserving its id. /no_think",
+    "fields": {
+      "invoice": {
+        "type": "string"
+      },
+      "amount_cents": {
+        "type": "integer"
+      }
+    },
+    "items": [
+      {
+        "id": "D01",
+        "text": "Fictional note 1. Invoice INV-104. Items: 2. Previous balance EUR 0.00. Final amount due: EUR 12.50.",
+        "expected": {
+          "invoice": "INV-104",
+          "amount_cents": 1250
+        }
+      },
+      {
+        "id": "D02",
+        "text": "Fictional note 2. Invoice INV-205. Items: 3. Previous balance EUR 0.00. Final amount due: EUR 49.99.",
+        "expected": {
+          "invoice": "INV-205",
+          "amount_cents": 4999
+        }
+      },
+      {
+        "id": "D03",
+        "text": "Fictional note 3. Invoice INV-309. Items: 4. Previous balance EUR 0.00. Final amount due: EUR 7.00.",
+        "expected": {
+          "invoice": "INV-309",
+          "amount_cents": 700
+        }
+      },
+      {
+        "id": "D04",
+        "text": "Fictional note 4. Invoice INV-412. Items: 5. Previous balance EUR 0.00. Final amount due: EUR 100.00.",
+        "expected": {
+          "invoice": "INV-412",
+          "amount_cents": 10000
+        }
+      },
+      {
+        "id": "D05",
+        "text": "Fictional note 5. Invoice INV-518. Items: 6. Previous balance EUR 0.00. Final amount due: EUR 23.50.",
+        "expected": {
+          "invoice": "INV-518",
+          "amount_cents": 2350
+        }
+      },
+      {
+        "id": "D06",
+        "text": "Fictional note 6. Invoice INV-621. Items: 7. Previous balance EUR 0.00. Final amount due: EUR 12.99.",
+        "expected": {
+          "invoice": "INV-621",
+          "amount_cents": 1299
+        }
+      },
+      {
+        "id": "D07",
+        "text": "Fictional note 7. Invoice INV-727. Items: 8. Previous balance EUR 0.00. Final amount due: EUR 99.00.",
+        "expected": {
+          "invoice": "INV-727",
+          "amount_cents": 9900
+        }
+      },
+      {
+        "id": "D08",
+        "text": "Fictional note 8. Invoice INV-830. Items: 9. Previous balance EUR 0.00. Final amount due: EUR 44.55.",
+        "expected": {
+          "invoice": "INV-830",
+          "amount_cents": 4455
+        }
+      },
+      {
+        "id": "D09",
+        "text": "Fictional note 9. Invoice INV-936. Items: 10. Previous balance EUR 0.00. Final amount due: EUR 31.00.",
+        "expected": {
+          "invoice": "INV-936",
+          "amount_cents": 3100
+        }
+      },
+      {
+        "id": "D10",
+        "text": "Fictional note 10. Invoice INV-1041. Items: 11. Previous balance EUR 0.00. Final amount due: EUR 15.95.",
+        "expected": {
+          "invoice": "INV-1041",
+          "amount_cents": 1595
+        }
+      },
+      {
+        "id": "D11",
+        "text": "Fictional note 11. Invoice INV-1146. Items: 12. Previous balance EUR 0.00. Final amount due: EUR 22.00.",
+        "expected": {
+          "invoice": "INV-1146",
+          "amount_cents": 2200
+        }
+      },
+      {
+        "id": "D12",
+        "text": "Fictional note 12. Invoice INV-1250. Items: 13. Previous balance EUR 0.00. Final amount due: EUR 60.99.",
+        "expected": {
+          "invoice": "INV-1250",
+          "amount_cents": 6099
+        }
+      }
+    ]
+  }
+}

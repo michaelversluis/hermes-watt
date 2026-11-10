@@ -1,4 +1,4 @@
-"""Local receipt ledger, observer and read-only Desktop API.
+"""Local receipt ledger, observer and explicit local comparison API.
 
 Kept together so both documented Hermes loaders import the exact same code,
 without sys.path changes or imports from private Hermes internals.
@@ -11,11 +11,16 @@ import re
 import sqlite3
 import statistics
 import threading
+import urllib.request
+import urllib.parse
+import uuid
 import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+from pydantic import BaseModel, ConfigDict, Field, StrictBool
+from typing import Literal
 
 METHOD = "apple-ioreport-cpu-gpu/v1"
 SCOPE = "Local CPU + GPU, system-wide"
@@ -117,7 +122,7 @@ class Store:
 
     def finish(self, run_id, *, status, joules=None, reason=None, overlap=False, now=None):
         with self.connect() as db:
-            db.execute("UPDATE runs SET ended=?,status=?,joules=?,method=?,reason=COALESCE(?,reason),overlap=? WHERE id=? AND status='running'",
+            db.execute("UPDATE runs SET ended=?,status=?,joules=?,method=?,reason=COALESCE(?,reason),overlap=MAX(overlap,?) WHERE id=? AND status='running'",
                        (time.time() if now is None else now, status, joules, METHOD if joules is not None else None,
                         reason, int(overlap), run_id))
 
@@ -289,7 +294,7 @@ def summary(store):
     rows = store.receipts(limit=200)
     # Never silently add overlapping measurement windows.
     eligible = [r for r in rows if r["energy"]["wh"] is not None and not r["energy"]["overlap"]]
-    return {"version": "0.1.0", "receipts": rows,
+    return {"version": "0.2.0", "receipts": rows,
             "summary": {"tasks": len(rows), "requests": sum(r["requests"] for r in rows),
                         "estimated_local_wh": sum(r["energy"]["wh"] for r in eligible) if eligible else None,
                         "included_energy_windows": len(eligible), "excluded_energy_windows": len(rows)-len(eligible),
@@ -352,7 +357,7 @@ def read_comparison(root):
                 raise ValueError("invalid_checks")
         # Never trust an edited summary percentage over its sample evidence.
         report = make_comparison(samples, model=data["model"], workload_sha256=data["workload_sha256"])
-        for key in ("created_at", "run_parameters"):
+        for key in ("created_at", "run_parameters", "workload", "workload_label"):
             if key in data:
                 report[key] = data[key]
         return report
@@ -377,3 +382,317 @@ def comparison():
         return {"comparison": read_comparison(storage_root())}
     except (OSError, ValueError):
         raise HTTPException(503, "The comparison report could not be read.") from None
+
+# The dashboard API loader imports this file directly (not as a package).
+# Fixed, reviewable JSON workloads avoid dynamic code loading and private imports.
+WORKLOADS = json.loads(Path(__file__).with_name('workloads.json').read_text(encoding='utf-8'))
+DEFAULT_ENDPOINT = 'http://127.0.0.1:18082/v1'
+DEFAULT_MODEL = 'Qwen3-1.7B-Q8_0'
+MAX_EXPERIMENT_SECONDS = 300
+
+
+class LocalModelUnavailable(Exception):
+    pass
+
+
+class ExperimentCancelled(Exception):
+    pass
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args, **kwargs):
+        raise LocalModelUnavailable('local_model_unavailable')
+
+
+def local_endpoint(value):
+    try:
+        parsed = urllib.parse.urlsplit(value)
+        if (parsed.scheme != 'http' or parsed.hostname not in {'127.0.0.1', '::1'}
+                or parsed.username or parsed.password or parsed.query or parsed.fragment
+                or parsed.path.rstrip('/') != '/v1' or not parsed.port):
+            raise ValueError('invalid_local_endpoint')
+    except (TypeError, ValueError):
+        raise ValueError('invalid_local_endpoint') from None
+    return value.rstrip('/')
+
+
+def experiment_settings():
+    # Public read-only API; copy only this plugin's non-secret settings.
+    from hermes_cli.config import load_config_readonly
+    settings = load_config_readonly()
+    for key in ('plugins', 'entries', 'hermes-watt', 'settings'):
+        if not isinstance(settings, dict):
+            raise ValueError('invalid_settings')
+        settings = settings.get(key, {})
+    if not isinstance(settings, dict):
+        raise ValueError('invalid_settings')
+    endpoint = local_endpoint(settings.get('comparison_endpoint', DEFAULT_ENDPOINT))
+    model = safe_label(settings.get('comparison_model', DEFAULT_MODEL))
+    if model == 'unknown':
+        raise ValueError('invalid_local_model')
+    return {'endpoint': endpoint, 'model': model}
+
+
+def request_answers(endpoint, model, items, workload):
+    fields = {'id': {'type': 'string'}, **workload['fields']}
+    schema = {'type': 'object', 'properties': {'results': {'type': 'array', 'minItems': len(items),
+              'maxItems': len(items), 'items': {'type': 'object', 'properties': fields,
+              'required': list(fields), 'additionalProperties': False}}}, 'required': ['results'], 'additionalProperties': False}
+    body = {'model': model, 'messages': [{'role': 'system', 'content': workload['system']},
+            {'role': 'user', 'content': json.dumps([{'id': item['id'], 'text': item['text']} for item in items])}],
+            'temperature': 0, 'seed': 42, 'max_tokens': 1024, 'cache_prompt': False,
+            'chat_template_kwargs': {'enable_thinking': False},
+            'response_format': {'type': 'json_schema', 'json_schema': {'name': 'checked_answers', 'strict': True, 'schema': schema}}}
+    request = urllib.request.Request(local_endpoint(endpoint) + '/chat/completions',
+                                    data=json.dumps(body).encode(), headers={'Content-Type': 'application/json'})
+    try:
+        # Ignore proxy environment variables: even loopback data must stay local.
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect)
+        with opener.open(request, timeout=20) as response:
+            data = response.read(1_000_001)
+        if len(data) > 1_000_000:
+            raise ValueError('oversized_response')
+        result = json.loads(data)
+    except Exception:
+        raise LocalModelUnavailable('local_model_unavailable') from None
+    try:
+        answers = json.loads(result['choices'][0]['message']['content'])['results']
+    except (KeyError, IndexError, TypeError, ValueError):
+        answers = []  # A malformed answer is a quality failure, not a successful saving.
+    return answers, result.get('usage') if isinstance(result, dict) else None
+
+
+def checked_answers(answers, items):
+    if not isinstance(answers, list):
+        return 0
+    found = {}
+    for answer in answers:
+        if not isinstance(answer, dict) or not isinstance(answer.get('id'), str) or answer['id'] in found:
+            return 0
+        found[answer['id']] = {k: v for k, v in answer.items() if k != 'id'}
+    if set(found) != {item['id'] for item in items}:
+        return 0
+    return sum(found[item['id']] == item['expected']
+               and all(type(found[item['id']].get(k)) is type(v) for k, v in item['expected'].items())
+               for item in items)
+
+
+def run_experiment(root, *, endpoint, model, workload='tickets', repetitions=5,
+                   progress=lambda **kw: None, cancelled=lambda: False,
+                   request_fn=request_answers, sampler_factory=AppleSampler):
+    endpoint = local_endpoint(endpoint)
+    if workload not in WORKLOADS or type(repetitions) is not int or not 3 <= repetitions <= 10:
+        raise ValueError('invalid_experiment')
+    definition = WORKLOADS[workload]
+    items = definition['items']
+    digest = hashlib.sha256(json.dumps(definition, sort_keys=True).encode()).hexdigest()
+    root = Path(root)
+    recorder = Recorder(lambda: root, local_energy=lambda: True, sampler_factory=sampler_factory)
+    session = 'watt-comparison-' + uuid.uuid4().hex
+    deadline = time.monotonic() + MAX_EXPERIMENT_SECONDS
+
+    def check_stop():
+        if cancelled():
+            raise ExperimentCancelled()
+        if time.monotonic() > deadline:
+            raise LocalModelUnavailable('experiment_timed_out')
+
+    progress(phase='warmup', done=0, total=repetitions * 2)
+    for batch in (items[:1], items):
+        check_stop()
+        request_fn(endpoint, model, batch, definition)
+    samples = []
+    for repeat in range(repetitions):
+        order = ('baseline', 'candidate') if repeat % 2 == 0 else ('candidate', 'baseline')
+        for variant in order:
+            check_stop()
+            identity = {'session_id': session, 'turn_id': uuid.uuid4().hex, 'model': model}
+            recorder.handle('pre_llm_call', identity)
+            begin = time.monotonic()
+            answers = []
+            batches = [[item] for item in items] if variant == 'baseline' else [items]
+            try:
+                for batch in batches:
+                    check_stop()
+                    payload = {**identity, 'api_request_id': uuid.uuid4().hex}
+                    recorder.handle('pre_api_request', payload)
+                    try:
+                        result, usage = request_fn(endpoint, model, batch, definition)
+                    except Exception:
+                        recorder.handle('api_request_error', payload)
+                        raise
+                    recorder.handle('post_api_request', {**payload, 'usage': usage})
+                    answers.extend(result if isinstance(result, list) else [None])
+            except Exception:
+                recorder.handle('on_session_end', {**identity, 'interrupted': True})
+                raise
+            recorder.handle('on_session_end', {**identity, 'completed': True})
+            receipt = Store(root).latest(session)
+            expected_id = opaque(json.dumps([session, identity['turn_id']]))
+            if (receipt is None or receipt['id'] != expected_id or receipt['status'] != 'completed'
+                    or recorder.errors or not receipt['accounting_complete']):
+                raise LocalModelUnavailable('receipt_unavailable')
+            # Detect other observed work in the same profile, even in another module/process.
+            with Store(root).connect() as db:
+                overlap = bool(db.execute('SELECT 1 FROM runs WHERE id != ? AND started < ? AND (ended IS NULL OR ended > ?) LIMIT 1',
+                                          (receipt['id'], receipt['ended'], receipt['started'])).fetchone())
+                if overlap:
+                    db.execute('UPDATE runs SET overlap=1 WHERE started < ? AND (ended IS NULL OR ended > ?)',
+                               (receipt['ended'], receipt['started']))
+            sample = {'variant': variant, 'repeat': repeat + 1, 'passed': checked_answers(answers, items),
+                      'checked': len(items), 'requests': len(batches), 'joules': receipt['energy']['joules'],
+                      'seconds': time.monotonic() - begin, 'overlap': overlap or receipt['energy']['overlap'],
+                      'receipt_id': receipt['id'], 'answers': answers}
+            samples.append(sample)
+            progress(phase=variant, done=len(samples), total=repetitions * 2)
+    check_stop()
+    report = make_comparison(samples, model=model, workload_sha256=digest)
+    report.update(created_at=time.time(), workload=workload, workload_label=definition['label'],
+                  run_parameters={'temperature': 0, 'seed': 42, 'cache_prompt': False, 'max_tokens': 1024, 'enable_thinking': False})
+    return report
+
+
+class ExperimentInput(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    request_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+    workload: Literal['tickets', 'extraction'] = 'tickets'
+    repetitions: int = Field(default=5, ge=3, le=10, strict=True)
+    consent: StrictBool
+
+
+class CancelInput(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    request_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+
+
+class ExperimentJobs:
+    def __init__(self, runner=run_experiment, launcher=None):
+        self.runner = runner
+        self.launcher = launcher or (lambda fn: threading.Thread(target=fn, daemon=True, name='hermes-watt-comparison').start())
+
+    def store(self, root):
+        store = Store(root)
+        with store.connect() as db:
+            db.execute('''CREATE TABLE IF NOT EXISTS experiments (
+              id TEXT PRIMARY KEY, workload TEXT NOT NULL, repetitions INTEGER NOT NULL,
+              status TEXT NOT NULL, phase TEXT NOT NULL, done INTEGER NOT NULL DEFAULT 0,
+              total INTEGER NOT NULL, started REAL NOT NULL, error TEXT)''')
+        return store
+
+    def state(self, root):
+        store = self.store(root)
+        with store.connect() as db:
+            # Never leave a permanent spinner after the plugin host exits mid-job.
+            db.execute("UPDATE experiments SET status='interrupted', error='host_interrupted' WHERE status IN ('running','cancelling') AND started < ?", (time.time() - MAX_EXPERIMENT_SECONDS - 60,))
+            row = db.execute('SELECT * FROM experiments ORDER BY started DESC LIMIT 1').fetchone()
+        return dict(row) if row else None
+
+    def start(self, root, body, settings):
+        if body.consent is not True:
+            raise HTTPException(400, 'Consent is required for this local energy experiment.')
+        local_endpoint(settings['endpoint'])
+        self.state(root)
+        store = self.store(root)
+        with store.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            existing = db.execute('SELECT * FROM experiments WHERE id=?', (body.request_id,)).fetchone()
+            if existing:
+                if (existing['workload'], existing['repetitions']) != (body.workload, body.repetitions):
+                    raise HTTPException(409, 'This request identifier belongs to another experiment.')
+                return dict(existing)
+            active = db.execute("SELECT 1 FROM experiments WHERE status IN ('running','cancelling')").fetchone()
+            if active:
+                raise HTTPException(409, 'An experiment is already running for this profile.')
+            db.execute('INSERT INTO experiments(id,workload,repetitions,status,phase,total,started) VALUES(?,?,?,?,?,?,?)',
+                       (body.request_id, body.workload, body.repetitions, 'running', 'queued', body.repetitions * 2, time.time()))
+        root = Path(root).resolve()  # Freeze ownership before starting a worker thread.
+        try:
+            self.launcher(lambda: self.work(root, body, dict(settings)))
+        except Exception:
+            self.update(root, body.request_id, status='failed', error='worker_unavailable')
+        return self.state(root)
+
+    def update(self, root, ident, **values):
+        allowed = {'status', 'phase', 'done', 'total', 'error'}
+        if not values or not values.keys() <= allowed:
+            raise ValueError('invalid_progress')
+        with self.store(root).connect() as db:
+            db.execute('UPDATE experiments SET ' + ','.join(f'{k}=?' for k in values) + ' WHERE id=?', [*values.values(), ident])
+
+    def cancelled(self, root, ident):
+        with self.store(root).connect() as db:
+            row = db.execute('SELECT status FROM experiments WHERE id=?', (ident,)).fetchone()
+            return not row or row['status'] != 'running'
+
+    def work(self, root, body, settings):
+        try:
+            report = self.runner(root, **settings, workload=body.workload, repetitions=body.repetitions,
+                                 progress=lambda **values: self.update(root, body.request_id, **values),
+                                 cancelled=lambda: self.cancelled(root, body.request_id))
+            if self.cancelled(root, body.request_id):
+                raise ExperimentCancelled()
+            pending = root / f'comparison-{body.request_id}.pending.json'
+            pending.write_text(json.dumps(report, indent=2, allow_nan=False), encoding='utf-8')
+            with self.store(root).connect() as db:
+                db.execute('BEGIN IMMEDIATE')
+                status = db.execute('SELECT status FROM experiments WHERE id=?', (body.request_id,)).fetchone()
+                if not status or status['status'] != 'running':
+                    raise ExperimentCancelled()
+                pending.replace(root / 'comparison.json')
+                db.execute("UPDATE experiments SET status='completed',phase='done' WHERE id=?", (body.request_id,))
+        except ExperimentCancelled:
+            self.update(root, body.request_id, status='cancelled', phase='stopped')
+        except Exception:
+            self.update(root, body.request_id, status='failed', error='local_experiment_failed')
+
+    def cancel(self, root, ident):
+        with self.store(root).connect() as db:
+            row = db.execute('SELECT status FROM experiments WHERE id=?', (ident,)).fetchone()
+            if not row:
+                raise HTTPException(404, 'Experiment not found in this profile.')
+            if row['status'] == 'running':
+                db.execute("UPDATE experiments SET status='cancelling' WHERE id=?", (ident,))
+        return self.state(root)
+
+
+experiment_jobs = ExperimentJobs()
+
+
+def require_json(request):
+    if request.headers.get('content-type', '').split(';')[0] != 'application/json':
+        raise HTTPException(415, 'Use application/json.')
+    # Hermes authenticates namespace/profile access. Reject browser cross-site writes as well.
+    if request.headers.get('sec-fetch-site') == 'cross-site':
+        raise HTTPException(403, 'Cross-site requests are not allowed.')
+
+
+@router.get('/experiment')
+def experiment_status():
+    try:
+        settings = experiment_settings()
+        return {'job': experiment_jobs.state(storage_root()), 'configured': True, 'model': settings['model'],
+                'workloads': [{'id': k, 'label': v['label'], 'description': v['description']} for k, v in WORKLOADS.items()]}
+    except (ValueError, TypeError):
+        return {'job': None, 'configured': False, 'model': None, 'workloads': []}
+    except (OSError, sqlite3.Error):
+        raise HTTPException(503, 'The local experiment is temporarily unavailable.') from None
+
+
+@router.post('/experiment', status_code=202)
+def start_experiment(body: ExperimentInput, request: Request):
+    require_json(request)
+    try:
+        return {'job': experiment_jobs.start(storage_root(), body, experiment_settings())}
+    except (ValueError, TypeError):
+        raise HTTPException(400, 'Configure a loopback model endpoint in Hermes Watt settings.') from None
+    except (OSError, sqlite3.Error):
+        raise HTTPException(503, 'The local experiment is temporarily unavailable.') from None
+
+
+@router.post('/experiment/cancel')
+def cancel_experiment(body: CancelInput, request: Request):
+    require_json(request)
+    try:
+        return {'job': experiment_jobs.cancel(storage_root(), body.request_id)}
+    except (OSError, sqlite3.Error):
+        raise HTTPException(503, 'The local experiment is temporarily unavailable.') from None

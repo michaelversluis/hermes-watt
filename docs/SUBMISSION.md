@@ -10,7 +10,7 @@
 
 **Catalog PR:** prepared fork branch; upstream creation is blocked by GitHub permissions through both the app integration and authenticated CLI. No upstream PR URL exists. The browser route is currently unavailable too. This is not an accepted catalog listing.
 
-[Open the prepared comparison](https://github.com/NousResearch/hermes-agent/compare/main...michaelversluis:michael/hermes-watt-catalog-20261108?expand=1). Use the title `feat(plugin-catalog): add Hermes Watt energy receipts and checked comparisons` and [the prepared PR body](CATALOG-PR.md). The submitted catalog entry must pin the final public 0.2.0 commit and describe the explicit worker and loopback requests. A Nous maintainer retains admission authority.
+[Open the prepared comparison](https://github.com/NousResearch/hermes-agent/compare/main...michaelversluis:michael/hermes-watt-catalog-v02?expand=1). Use the title `feat(plugin-catalog): add Hermes Watt energy receipts and checked comparisons` and [the prepared PR body](CATALOG-PR.md). The prepared entry pins `e77ad6987ff67a116cc54126b0eee358afee93b9`, changes exactly one catalog file and discloses the explicit worker and loopback requests. Structural validation and all 15 current upstream checks passed. A Nous maintainer retains admission authority.
 
 **Contact email / Discord:** supplied privately by Michael; deliberately omitted from Git. Use only in the contest form.
 

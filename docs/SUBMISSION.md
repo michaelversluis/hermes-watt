@@ -2,28 +2,26 @@
 
 **Title:** Hermes Watt — good work, less waste
 
-**Description:** Hermes Watt gives your agent an honest energy receipt: local CPU/GPU estimates, model requests, linked background calls, failures and duration, while keeping cloud energy explicitly unknown. Its repeatable workflow experiment checks every answer before showing an efficiency result. In one small M3 Max experiment, batching twelve tasks reduced median estimated CPU/GPU energy by 59.4%, with all 72 answers correct across both variants. An earlier experiment failed quality and received no saving claim. Native Desktop page, /watt, local-only data, MIT, public Hermes APIs.
+**Description:** Hermes Watt gives your agent an honest energy receipt and a button to test a lower-energy workflow. Choose a built-in fictional task, consent to local processing, and compare individual requests with a batch against identical answer checks. Two M3 Max/Qwen experiments with ten repetitions per approach achieved 480/480 correct answers and 58.1% / 32.7% lower median estimated local CPU/GPU energy. An earlier failed-quality run earned no saving claim. Provider inference energy stays unknown. Native Desktop component, /watt, local profile storage, cancel/progress controls, MIT and public Hermes APIs. Official validation, 63 Python tests and real Hermes-host integration pass. Native Desktop visual QA remains pending; the included 60-second film is a labelled data replay.
 
 **Repository:** https://github.com/michaelversluis/hermes-watt
 
-**Catalog PR:** branch prepared and pushed; upstream PR creation was rejected by GitHub permissions through both the app integration and authenticated CLI. It is **not** submitted.
+**Release:** https://github.com/michaelversluis/hermes-watt/releases/tag/v0.2.0
 
-[Open the prepared comparison](https://github.com/NousResearch/hermes-agent/compare/main...michaelversluis:michael/hermes-watt-catalog-20261108?expand=1). Use the title `feat(plugin-catalog): add Hermes Watt energy receipts and checked comparisons` and [this prepared PR body](CATALOG-PR.md).
+**Catalog PR:** prepared fork branch; upstream creation is blocked by GitHub permissions through both the app integration and authenticated CLI. No upstream PR URL exists. The browser route is currently unavailable too. This is not an accepted catalog listing.
 
-The branch changes exactly one catalog file and pins `ead82379e6329e8c55c279665c6e09481234a18f`. Structural catalog validation and all 15 upstream `scripts/check` checks passed. A Nous maintainer must review and admit the listing.
+[Open the prepared comparison](https://github.com/NousResearch/hermes-agent/compare/main...michaelversluis:michael/hermes-watt-catalog-20261108?expand=1). Use the title `feat(plugin-catalog): add Hermes Watt energy receipts and checked comparisons` and [the prepared PR body](CATALOG-PR.md). The submitted catalog entry must pin the final public 0.2.0 commit and describe the explicit worker and loopback requests. A Nous maintainer retains admission authority.
 
-**Contact email / Discord:** pending Michael's answer; do not guess or publish private contact data in this repository.
+**Contact email / Discord:** supplied privately by Michael; deliberately omitted from Git. Use only in the contest form.
 
-**X demo post:** pending publication. The included 60-second video is a labelled replay of genuine evidence, not a native screen recording. A live Desktop recording is desirable once native UI verification is available.
+**X account:** @michaelversluis. Publication authorized; no post has been published yet.
 
-Suggested X text:
+Prepared X text (attach the demo video):
 
-> AI needs an energy receipt, too. Hermes Watt checks answer quality before showing an efficiency result. Our local experiment: 59.4% less estimated CPU/GPU energy; 72/72 answers correct. Cloud energy stays unknown. Built for @NousResearch. github.com/michaelversluis/hermes-watt
+> AI needs an energy receipt. Hermes Watt compares workflows and checks every answer. Two local tests: 58.1% and 32.7% lower estimated CPU/GPU energy; 480/480 correct. Cloud energy stays unknown. Built for @NousResearch. github.com/michaelversluis/hermes-watt
 
-Video: [download the 60-second MP4](https://github.com/michaelversluis/hermes-watt/releases/download/v0.1.0/hermes-watt-demo.mp4).
-
-Release: https://github.com/michaelversluis/hermes-watt/releases/tag/v0.1.0
+Evidence replay: [60-second MP4](https://github.com/michaelversluis/hermes-watt/releases/download/v0.2.0/hermes-watt-evidence-v02.mp4). It is not a live Desktop recording. [Native recording plan](DEMO-SCRIPT.md).
 
 Form: https://form.typeform.com/to/FwJLvOln
 
-The form requires email, Discord username, an X demo-post link and the catalog PR link. Do not describe this as submitted until the form confirms receipt. The announcement and form show different timezone deadlines; use the earlier one, 11 November 2026 at 22:00 Europe/Amsterdam.
+The form requires email, Discord username, an X demo-post link and the catalog PR link. Do not mark the entry submitted until the form confirms receipt. The announcement and form show different timezone deadlines; use the earlier one, **11 November 2026 at 22:00 Europe/Amsterdam**.

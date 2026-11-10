@@ -9,39 +9,47 @@ Token counts tell you how much text moved. They do not tell you how much electri
 - A native Hermes Desktop page with task receipts, observed model requests, linked background calls, failures and duration.
 - `/watt` for the latest receipt in the current conversation.
 - Optional Apple Silicon CPU + GPU energy estimates, always labelled **estimated** and **system-wide**.
-- A repeatable local-model experiment: twelve separate classification requests versus one batch, with the same answer checks and three repetitions each.
+- **A comparison button inside the plugin:** choose support tickets or document extraction, give consent, and compare twelve separate requests with one batch. Choose 3, 5 or 10 repetitions per approach; stop safely at any time.
 - No automatic model switching or prompt rewriting. The observer cannot modify agent output.
 
-[Download the 60-second evidence video](https://github.com/michaelversluis/hermes-watt/releases/download/v0.1.0/hermes-watt-demo.mp4) · [Actual /watt output](docs/evidence/watt-output.txt)
+[60-second evidence replay](https://github.com/michaelversluis/hermes-watt/releases/download/v0.2.0/hermes-watt-evidence-v02.mp4) (recorded data, not a native screen recording) · [Actual /watt output](docs/evidence/watt-output.txt)
 
-## A real experiment, with boundaries
+## Two real experiments, with boundaries
 
-On an Apple M3 Max, Qwen3-1.7B-Q8_0 classified the same twelve synthetic tickets:
+On an Apple M3 Max, Qwen3-1.7B-Q8_0 completed two fixed synthetic tasks. Each approach ran **ten times**, in alternating order, with the same answer checks:
 
-| | One request per ticket | One batched request |
-|---|---:|---:|
-| Correct answers across three repetitions | 36 / 36 | 36 / 36 |
-| Requests per repetition | 12 | 1 |
-| Median estimated local CPU + GPU energy | 59.597 J | 24.201 J |
-| Range across repetitions | 57.459–59.704 J | 23.259–25.443 J |
-| Median duration | 4.79 s | 2.00 s |
+| Task | Individual requests, median | Batched request, median | Correct answers, both approaches | Lower estimated local energy |
+|---|---:|---:|---:|---:|
+| Classify 12 support tickets | 55.063 J | 23.060 J | 240 / 240 | 58.1% |
+| Extract invoice references and amounts from 12 fictional notes | 83.015 J | 55.884 J | 240 / 240 | 32.7% |
 
-That is **59.4% lower estimated local CPU + GPU energy in this experiment**. It includes other local processes, excludes model loading and is not a total-device, cloud, CO₂ or universal AI savings claim. Three repetitions are a small demonstration, not a statistical guarantee. The checks establish correctness for this narrow task only.
+**480/480 answers passed.** In both experiments, every batched run used less estimated local CPU + GPU energy than every individual-request run. These are results for this machine, model and narrow workloads, including unrelated local activity. Model loading and warm-up are excluded. They are **not** measurements of total device electricity, cloud energy or CO₂, and do not establish a universal saving or statistical guarantee.
 
-[Raw successful evidence](docs/evidence/qwen-1.7b.json) · [Earlier failed experiment](docs/evidence/qwen-0.6b-inconclusive.json) · [Method and reproduction](docs/METHOD.md)
+[Ticket samples](docs/evidence/qwen-1.7b-tickets-10.json) · [Extraction samples](docs/evidence/qwen-1.7b-extraction-10.json) · [Method and reproduction](docs/METHOD.md)
 
-The earlier 0.6B experiment failed the answer checks. Its lower energy did **not** earn a saving claim. That is the point: less computation is only useful when the work still succeeds.
+An [earlier 0.6B experiment](docs/evidence/qwen-0.6b-inconclusive.json) failed the answer checks and received **no saving claim**. The [original three-repeat 0.1.0 experiment](docs/evidence/qwen-1.7b.json) remains available as historical evidence; its 59.4% result is not reused for the new code.
+
+![Two checked workflows with lower estimated local CPU and GPU energy](docs/evidence/comparison-v02.png)
+
+## Try the comparison
+
+1. Start an OpenAI-compatible model server on your computer. [Exact reproduction commands](docs/METHOD.md#run-it-yourself) use the pinned Qwen model and llama.cpp.
+2. Open **Hermes Watt**, choose a task and repetition count, and tick the consent box.
+3. Click **Test a lower-energy approach**. Progress appears while it runs; **Stop test** finishes the current request and preserves your previous result.
+
+The plugin sends only its built-in fictional examples to a literal loopback endpoint. It never sends your conversations, downloads a model, chooses a cloud provider or changes your agent's model. The endpoint defaults to `http://127.0.0.1:18082/v1`; change it and the model name in Hermes Watt settings. Each profile permits only one active experiment. A failed or interrupted test preserves the last completed report.
 
 ## Install
 
 Requires **Hermes 0.23.0 or newer**. Existing older Hermes installations must be upgraded separately. Nothing in this repository updates your agent automatically.
 
+Copy the **pinned install command** from the [0.2.0 release](https://github.com/michaelversluis/hermes-watt/releases/tag/v0.2.0). It uses a full 40-character commit SHA, as required by `--ref`. Then enable the plugin:
+
 ```sh
-hermes plugins install michaelversluis/hermes-watt --ref ead82379e6329e8c55c279665c6e09481234a18f
 hermes plugins enable hermes-watt
 ```
 
-The command pins the exact validated 0.1.0 source commit. Catalog admission is pending; this is a direct repository install. Restart your Hermes session. Enable the agent plugin and Desktop plugin for the same profile, then choose **Hermes Watt** in the sidebar or command palette. After a task, `/watt` shows the conversation's receipt.
+Catalog admission is pending; this is a direct repository install. Restart your Hermes session. Enable the agent plugin and Desktop plugin for the same profile, then choose **Hermes Watt** in the sidebar or command palette. After a task, `/watt` shows the conversation's receipt.
 
 Request metadata stays local when the plugin is enabled. Hardware energy collection is **off by default**. Opt in through the plugin settings, or merge this into the active profile's `config.yaml` (preserve your other settings):
 
@@ -59,9 +67,9 @@ Restart the session after changing settings. On unsupported hardware, with colle
 
 ## Privacy and permissions
 
-No cloud account, API key, telemetry service or plugin-created background process is needed. The runtime reads Hermes observer metadata and, with consent, local hardware counters. It writes a profile-scoped SQLite ledger through Hermes's public plugin storage API. It does not store prompt text, response text, tool arguments or raw provider errors.
+No cloud account, API key or telemetry service is needed. Ordinary observation stores metadata and optional hardware estimates locally; it never stores conversation prompts, responses, tool arguments or raw provider errors.
 
-The Desktop API is read-only and inherits Hermes authentication. The command uses the host-provided conversation identity. The development preview and benchmark are separate, manually run loopback tools; never expose the preview to the internet. See [full disclosures](docs/PRIVACY.md).
+The Desktop API inherits Hermes authentication. Its explicit comparison action starts one bounded worker thread, sends synthetic examples to your configured loopback model server and saves the synthetic answers and result in this profile. It makes no external network calls and starts no shell process or model service. Experiment consent is separate from ordinary task-energy collection. The command uses the host-provided conversation identity. The development preview is loopback-only; never expose it to the internet. See [full disclosures](docs/PRIVACY.md).
 
 ## Development
 

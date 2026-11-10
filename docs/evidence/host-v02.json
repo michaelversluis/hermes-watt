@@ -1,0 +1,17 @@
+{
+  "hermes_revision": "2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19",
+  "plugin_version": "0.2.0",
+  "host": "actual isolated Hermes serve and plugin host",
+  "unauthenticated_get_status": 401,
+  "authenticated_get_status": 200,
+  "start_status": 202,
+  "same_request_id_is_idempotent": true,
+  "second_job_status": 409,
+  "final_status": "completed",
+  "receipts": 6,
+  "observed_requests": 39,
+  "checked_answers": 72,
+  "passed_answers": 72,
+  "native_desktop_ui": "not verified",
+  "runtime_source_commit": "ee0471b8fe58e51e24b7d6ec3978b6afcb4b8618"
+}
